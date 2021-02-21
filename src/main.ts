@@ -11,11 +11,29 @@ export class Query {
         var arrayBuff = await resImage.arrayBuffer();
         var data = Buffer.from(arrayBuff);
 
-        fs.writeFile('out1.png', data, 'binary', (err: any) => {
+        fs.writeFile('./imgs/out1.png', data, 'binary', (err: any) => {
             if (err) {
                 console.log("Failed to write to disk");
             }
         });
+    }
+
+    static async getPanorama(lat: number, lon: number, date: string = '2020-06-01'): Promise<void> {        
+        for (var i = 0; i < 10; i++) {
+            var resImage: Blob = await getSatelliteImage(lat.toString(), lon.toString(), date);
+
+            var arrayBuff = await resImage.arrayBuffer();
+            var data = Buffer.from(arrayBuff);
+            
+            var filename: string = i.toString();
+            fs.writeFile(`./imgs/out${filename}.png`, data, 'binary', (err: any) => {
+                if (err) {
+                    console.log("Failed to write to disk");
+                }
+            });
+
+            lat -= 0.4;
+        }
     }
 }
 
